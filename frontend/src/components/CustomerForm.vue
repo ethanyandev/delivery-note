@@ -28,7 +28,7 @@
 import { reactive, ref } from 'vue'
 
 const form = reactive({
-  name: '锂鑫科技',
+  name: '武汉锂鑫智造工程有限公司',
   address: '',
   contact: '',
   phone: '',

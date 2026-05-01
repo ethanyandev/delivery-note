@@ -101,7 +101,7 @@ def _insert_extra_item_rows(ws, copy_start_row: int, extra_count: int):
 def _fill_copy(ws, copy_start_row: int, customer: dict, materials: list[dict],
                order_number: str, today: date):
     """Fill one copy of the delivery note with all materials."""
-    date_str = f"                                 {today.year}      {today.month:02d}      {today.day:02d}日"
+    date_str = f"                                 {today.year}年      {today.month:02d}月      {today.day:02d}日"
     ws.cell(row=copy_start_row + DATE_ROW_OFFSET, column=2).value = date_str
 
     ws.cell(row=copy_start_row + CUSTOMER_ROW_OFFSET, column=2).value = f"客户名称：{customer['name']}"
