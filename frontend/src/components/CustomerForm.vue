@@ -29,9 +29,9 @@ import { reactive, ref } from 'vue'
 
 const form = reactive({
   name: '武汉锂鑫智造工程有限公司',
-  address: '',
-  contact: '',
-  phone: '',
+  address: '湖北省武汉市新洲区双柳街快云路1号',
+  contact: '李长青',
+  phone: '15002496736',
 })
 
 const rules = {
