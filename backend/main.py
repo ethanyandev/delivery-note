@@ -70,6 +70,7 @@ class MaterialItem(BaseModel):
     quantity: float
     unit: str
     unit_price: float
+    remark: str = ""
 
 
 class GenerateRequest(BaseModel):
