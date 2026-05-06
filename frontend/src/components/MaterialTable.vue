@@ -110,6 +110,7 @@ function getSelectedMaterials() {
     quantity: item.quantity,
     unit: item.unit,
     unit_price: item.unit_price,
+    remark: item.remark,
   }))
 }
 
