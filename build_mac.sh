@@ -1,9 +1,9 @@
 #!/bin/bash
 
-# 构建 macOS .app 安装包
+# 构建 macOS .app 并打包成 DMG
 # 用法: ./build_mac.sh          (当前架构)
 #       ./build_mac.sh --intel  (交叉编译 Intel x64 包)
-# 输出: dist/送货单生成系统-mac-<arch>.zip
+# 输出: dist/送货单生成系统-mac-<arch>.dmg
 
 set -e
 DIR="$(cd "$(dirname "$0")" && pwd)"
@@ -80,25 +80,44 @@ $PIP_PREFIX "$VENV/bin/python3" -m PyInstaller \
     --add-data "../frontend/dist:static" \
     desktop.py 2>&1 | grep -E "completed successfully|ERROR"
 
-# 3. 压缩
-echo "[3/4] 压缩安装包..."
+# 3. 制作 DMG
+echo "[3/4] 制作 DMG..."
 cd "$DIR/backend/dist"
-ZIP_NAME="送货单生成系统-mac-${ARCH_SUFFIX}.zip"
-rm -f "$ZIP_NAME"
-ditto -c -k --sequesterRsrc --keepParent "送货单生成系统.app" "$ZIP_NAME"
+DMG_NAME="送货单生成系统-mac-${ARCH_SUFFIX}.dmg"
+rm -f "$DMG_NAME"
+
+# 临时目录里摆放 .app + 指向 /Applications 的快捷方式，
+# 这样打开 DMG 时是经典的"把 App 拖进 Applications"安装界面
+STAGING="$DIR/backend/dist/.dmg-staging"
+rm -rf "$STAGING"
+mkdir -p "$STAGING"
+cp -R "送货单生成系统.app" "$STAGING/"
+ln -s /Applications "$STAGING/Applications"
+
+# hdiutil 是 macOS 系统自带命令，无需任何额外依赖
+hdiutil create \
+    -volname "送货单生成系统" \
+    -srcfolder "$STAGING" \
+    -fs HFS+ \
+    -format UDZO \
+    -ov \
+    "$DMG_NAME"
+
+rm -rf "$STAGING"
 
 # 4. 输出
-SIZE=$(du -sh "$ZIP_NAME" | cut -f1)
+SIZE=$(du -sh "$DMG_NAME" | cut -f1)
 APP_SIZE=$(du -sh "送货单生成系统.app" | cut -f1)
 echo ""
 echo "========================================="
 echo "  构建完成!"
 echo ""
 echo "  .app 大小: $APP_SIZE"
-echo "  .zip 大小: $SIZE"
+echo "  .dmg 大小: $SIZE"
 echo "  架构: macOS $ARCH_LABEL"
 echo ""
-echo "  安装包: backend/dist/$ZIP_NAME"
+echo "  安装包: backend/dist/$DMG_NAME"
 echo "========================================="
 echo ""
-echo "分发: 将 .zip 发送给用户，解压后双击 .app 即可使用"
+echo "分发: 将 .dmg 发送给用户，双击打开后把 App 拖入 Applications 即可"
+echo "注意: 未签名，用户首次打开需右键→打开，或先执行 xattr -cr 送货单生成系统.app"

@@ -85,11 +85,11 @@ jobs:
         include:
           - arch_name: Intel x64
             artifact_name: delivery-note-macos-x64
-            package_name: backend/dist/送货单生成系统-mac-x64.zip
+            package_name: backend/dist/送货单生成系统-mac-x64.dmg
             runner: macos-15-intel
           - arch_name: Apple Silicon arm64
             artifact_name: delivery-note-macos-arm64
-            package_name: backend/dist/送货单生成系统-mac-arm64.zip
+            package_name: backend/dist/送货单生成系统-mac-arm64.dmg
             runner: macos-15
 
     steps:
